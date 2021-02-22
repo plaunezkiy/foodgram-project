@@ -38,6 +38,7 @@
 @import "../blocks/form/__field-group-ingredientes/form__field-group-ingredientes.css";
 @import "../blocks/form/__ingredient-link/form__ingerident-link.css";
 @import "../blocks/form/__field-group/_time/form__field-group_time.css";
+@import "../blocks/form/__field-group/_file/form__field-group_file.css";
 @import "../blocks/form/__file/form__file.css";
 @import "../blocks/form/__file-button/form__file-button.css";
 @import "../blocks/form/__item-list/form__item-list.css";

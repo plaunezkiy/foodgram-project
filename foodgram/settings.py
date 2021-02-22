@@ -20,6 +20,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
+    'api',
     'recipes',
     'users',
     'django.contrib.admin',
@@ -28,6 +29,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'multiselectfield',
 ]
 
 MIDDLEWARE = [

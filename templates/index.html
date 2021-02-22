@@ -1,4 +1,17 @@
 {% extends 'base.html' %}
+{% load static %}
+{% block title %}Рецепты{% endblock %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="/static/pages/index.css">
+{% endblock %}
+
+{% block nav %}
+    {% with tab='recipes' %}
+        {{ block.super }}
+    {% endwith %}
+{% endblock %}
+
 {% block content %}
 <div class="main__header">
     <h1 class="main__title">Рецепты</h1>
@@ -21,4 +34,18 @@
     {% include 'recipe_card.html' %}
 </div>
 {% include 'paginator.html' %}
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/components/MainCards.js' %}"></script>
+
+<script src="{% static 'js/components/Purchases.js' %}"></script>
+<script src="{% static 'js/components/Favorites.js' %}"></script>
+
+<script src="{% static 'js/config/config.js' %}"></script>
+<script src="{% static 'js/components/CardList.js' %}"></script>
+<script src="{% static 'js/components/Header.js' %}"></script>
+
+<script src="{% static 'js/api/Api.js' %}"></script>
+<script src="{% static 'indexAuth.js' %}"></script>
 {% endblock %}
