@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load fetch %}
+{% block title %}{{ title }}{% endblock %}
+
+{% block stylesheet %}
+{% if tab == 'subscriptions' %}
+<link rel="stylesheet" href="{% static 'pages/myFollow.css' %}">
+{% else %}
+<link rel="stylesheet" href="{% static 'pages/index.css' %}">
+{% endif %}
+{% endblock %}
+{% block nav %}
+    {% with tab=tab %}
+        {{ block.super }}
+    {% endwith %}
+{% endblock %}
+
+{% block content %}
+<div class="main__header">
+    <h1 class="main__title">{{ title }}</h1>
+    {% csrf_token %}
+    {% if tags %}
+    <ul class="tags">
+        <li class="tags__item">
+            <a id="breakfast"
+                class="tags__checkbox tags__checkbox_style_orange tags__checkbox{% if 'breakfast' in request.session.tag_list %}_active{% endif %}"
+                href="{% url 'edit_tag' 'breakfast' request.path %}">
+            </a>
+            <span class="tags__label">Завтрак</span>
+        </li>
+        <li class="tags__item">
+            <a id="lunch"
+                class="tags__checkbox tags__checkbox_style_green tags__checkbox{% if 'lunch' in request.session.tag_list %}_active{% endif %}"
+                href="{% url 'edit_tag' 'lunch' request.path %}">
+            </a>
+            <span for="lunch" class="tags__label">Обед</span>
+        </li>
+        <li class="tags__item">
+            <a id="dinner"
+                class="tags__checkbox tags__checkbox_style_purple tags__checkbox{% if 'dinner' in request.session.tag_list %}_active{% endif %}"
+                href="{% url 'edit_tag' 'dinner' request.path %}">
+            </a>
+            <label for="dinner" class="tags__label">Ужин</label>
+        </li>
+    </ul>
+    {% endif %}
+</div>
+
+<div class="card-list">
+    {% for item in page %}
+        {% include card_tmp %}
+    {% endfor %}
+</div>
+
+{% if page.has_other_pages %}
+    {% include 'paginator.html' with items=page paginator=paginator %}
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+{% if tab == 'subscriptions' %}
+
+<script src="{% static 'js/config/config.js' %}"></script>
+<script src="{% static 'js/components/MainCards.js' %}"></script>
+<script src="{% static 'js/components/MyFollow.js' %}"></script>
+<script src="{% static 'js/components/Subscribe.js' %}"></script>
+<script src="{% static 'js/components/Header.js' %}"></script>
+<script src="{% static 'js/api/Api.js' %}"></script>
+<script src="{% static 'myFollow.js' %}"></script>
+
+{% else %}
+
+<script src="{% static 'js/components/MainCards.js' %}"></script>
+<script src="{% static 'js/components/Purchases.js' %}"></script>
+{% if user.is_authenticated %}
+<script src="{% static 'js/components/Favorites.js' %}"></script>
+{% endif %}
+<script src="{% static 'js/config/config.js' %}"></script>
+<script src="{% static 'js/components/CardList.js' %}"></script>
+<script src="{% static 'js/components/Header.js' %}"></script>
+
+<script src="{% static 'js/api/Api.js' %}"></script>
+<script src="{% static 'indexAuth.js' %}"></script>
+
+{% endif %}
+{% endblock %}

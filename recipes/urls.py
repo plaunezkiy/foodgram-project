@@ -4,10 +4,19 @@ from . import views
 
 
 urlpatterns = [
-    path('base/', views.base, name='base'),
-    path('', views.index, name='index'),
+    path('', views.IndexView.as_view(), name='index'),
+
     path('new/', views.CreateRecipeView.as_view(), name='new_recipe'),
-    path('recipe/<slug:slug>/edit/', views.EditRecipeView.as_view(), name='edit_recipe'),
+    path('user/<str:username>/<slug:slug>/', views.single_recipe, name='recipe'),
+    path('user/<str:username>/<slug:slug>/edit/', views.EditRecipeView.as_view(), name='edit_recipe'),
+    path('user/<str:username>/<slug:slug>/delete/', views.delete_recipe, name='delete_recipe'),
 
     path('ingredients/', views.list_ingredients, name='list_ingredients'),
+    path('tag/<str:tag>/?prev=<path:previous>/', views.edit_tag, name='edit_tag'),
+
+    path('subscriptions/', views.SubscribeView.as_view(), name='subscriptions'),
+    path('subscriptions/<int:user_id>/', views.SubscribeView.as_view(), name='remove_subscription'),
+
+    path('favorites/', views.FavoriteView.as_view(), name='favorites'),
+    path('favorites/<int:recipe_id>/', views.FavoriteView.as_view(), name='remove_favorite')
 ]

@@ -1,7 +1,7 @@
-a = input().split()
-if a[1] == '+':
-    print(int(a[0]) + int(a[2]))
-elif a[1] == '-':
-    print(int(a[0]) - int(a[2]))
-elif a[1] == '/':
-    print(int(a[0]) / int(a[2]))
+import csv
+from recipes.models import Ingredient
+
+with open('ingredients.csv') as f:
+    reader = csv.reader(f)
+    for row in reader[:3]:
+        print(row)

@@ -1,6 +1,6 @@
 import os
 from django.db import models
-from users.models import get_user_model
+from django.contrib.auth import get_user_model
 from multiselectfield import MultiSelectField
 
 User = get_user_model()
@@ -16,7 +16,7 @@ class Ingredient(models.Model):
     dimension = models.CharField(max_length=25)
 
     def __str__(self):
-        return f"{self.title} / {self.dimension}"
+        return f'{self.title} / {self.dimension}'
 
     class Meta:
         verbose_name = 'Ингридиент'
@@ -37,6 +37,7 @@ class Recipe(models.Model):
     def __str__(self):
         return self.name
 
+    @property
     def get_image_name(self):
         return os.path.basename(self.image.url)
 
@@ -47,6 +48,13 @@ class Recipe(models.Model):
 
 
 class RecipeIngredient(models.Model):
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE)
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='ingredients')
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     amount = models.PositiveIntegerField()
+
+    class Meta:
+        verbose_name = 'Ингридиент к рецептам'
+        verbose_name_plural = 'Ингридиенты к рецептам'
+
+    def __str__(self):
+        return f'{self.recipe.name} - {self.ingredient.title} - {self.ingredient.dimension}'

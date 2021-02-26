@@ -1,21 +1,76 @@
-import os
+import json
+
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
-from django.http import JsonResponse
+
+from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
 from pytils.translit import slugify
 from django.views.generic import View
 
+from users.models import User, Favorite, Follow
 from .forms import RecipeForm
-from .models import Ingredient, Recipe
+from .models import Ingredient, Recipe, RecipeIngredient
+from .mixins import MainMixin
 
 
-def base(request):
-    return render(request, 'base.html')
+class IndexView(MainMixin, View):
+    title = 'Рецепты'
+    tab = 'recipes'
 
 
-def index(request):
-    return render(request, 'index.html')
+class FavoriteView(LoginRequiredMixin, MainMixin, View):
+    login_url = '/login/'
+    title = 'Избранное'
+    tab = 'favorites'
+
+    def get(self, request):
+        favs = Favorite.objects.filter(user=request.user)
+        self.queryset = Recipe.objects.filter(id__in=favs.values('recipe_id'))
+        return super(FavoriteView, self).get(request)
+
+    def post(self, request):
+        data = json.loads(request.body)
+        recipe_id = data['id']
+        recipe = get_object_or_404(Recipe, id=recipe_id)
+        obj, created = Favorite.objects.get_or_create(recipe=recipe, user=request.user)
+        return JsonResponse(data={'success': bool(created)}, safe=True)
+
+    def delete(self, request, recipe_id):
+        recipe = get_object_or_404(Recipe, id=recipe_id)
+        get_object_or_404(Favorite, recipe=recipe, user=request.user).delete()
+        return JsonResponse(data={'success': True}, safe=True)
+
+
+class SubscribeView(LoginRequiredMixin, MainMixin, View):
+    login_url = '/login/'
+    title = 'Подписки'
+    tab = 'subscriptions'
+    card_template = 'author_card.html'
+    tags = False
+
+    def get(self, request):
+        subs = Follow.objects.filter(user=request.user)
+        self.queryset = User.objects.filter(id__in=subs.values('author_id'))
+        return super(SubscribeView, self).get(request)
+
+    def post(self, request):
+        data = json.loads(request.body)
+        recipe_id = data['id']
+        author = get_object_or_404(User, id=recipe_id)
+        obj, created = Follow.objects.get_or_create(author=author, user=request.user)
+        return JsonResponse(data={'success': bool(created)}, safe=True)
+
+    def delete(self, request, user_id):
+        author = get_object_or_404(User, id=user_id)
+        get_object_or_404(Follow, author=author, user=request.user).delete()
+        return JsonResponse(data={'success': True}, safe=True)
+
+
+def single_recipe(request, username, slug):
+    user = get_object_or_404(User, username=username)
+    recipe = get_object_or_404(Recipe, slug=slug, author=user)
+    return render(request, 'single_page.html', context={'recipe': recipe})
 
 
 class CreateRecipeView(LoginRequiredMixin, View):
@@ -28,14 +83,32 @@ class CreateRecipeView(LoginRequiredMixin, View):
     def post(self, request):
         form = RecipeForm(request.POST, files=request.FILES)
         if form.is_valid():
+            ing_names = request.POST.getlist('nameIngredient')
+            ing_values = request.POST.getlist('valueIngredient')
+            ing_units = request.POST.getlist('unitsIngredient')
+
             recipe = form.save(commit=False)
             recipe.author = request.user
             recipe.slug = slugify(recipe.name)
             recipe.save()
+            if len(ing_names) == len(ing_units) == len(ing_values):
+                counter = len(ing_names)
+                for i in range(counter):
+                    ingredient = get_object_or_404(
+                        Ingredient,
+                        title=ing_names[i],
+                        dimension=ing_units[i]
+                    )
+                    RecipeIngredient.objects.get_or_create(
+                        recipe=recipe,
+                        ingredient=ingredient,
+                        amount=ing_values[i])
+            else:
+                return redirect('new_recipe')
         else:
             return render(request, 'recipe_form.html', context={'form': form})
 
-        return redirect('index')
+        return redirect('recipe', username=recipe.author, slug=recipe.slug)
 
 
 class EditRecipeView(LoginRequiredMixin, View):
@@ -44,33 +117,51 @@ class EditRecipeView(LoginRequiredMixin, View):
     def get(self, request, slug):
         recipe = get_object_or_404(Recipe, slug=slug)
         if recipe.author != request.user:
-            return redirect('index')
+            return redirect('recipe', username=recipe.author, slug=recipe.slug)
 
         form = RecipeForm(instance=recipe)
-        return render(
-            request,
-            'recipe_form.html',
-            context={
-                'form': form, 'edit': True, 'image_name': recipe.get_image_name()
-            }
-        )
+        return render(request, 'recipe_form.html', context={'form': form, 'recipe': recipe})
 
-    def post(self, request, slug):
+    def post(self, request, username, slug):
+        get_object_or_404(User, username=username)
         recipe = get_object_or_404(Recipe, slug=slug)
         if recipe.author != request.user:
-            return redirect('index')
+            return redirect('recipe', username=recipe.author, slug=recipe.slug)
 
-        form = RecipeForm(request.POST, files=request.FILES)
+        form = RecipeForm(request.POST, files=request.FILES, instance=recipe)
         if form.is_valid():
-            form.edit(request.user)
-        else:
-            return render(request, 'recipe_form.html',
-                          context={
-                              'form': form, 'edit': True, 'image_name': recipe.get_image_name()
-                          }
-                          )
-        return redirect('index')
+            ing_names = request.POST.getlist('nameIngredient')
+            ing_values = request.POST.getlist('valueIngredient')
+            ing_units = request.POST.getlist('unitsIngredient')
 
+            form.save()
+            if len(ing_names) == len(ing_units) == len(ing_values):
+                RecipeIngredient.objects.filter(recipe=recipe).delete()
+                counter = len(ing_names)
+                for i in range(counter):
+                    ingredient = get_object_or_404(
+                        Ingredient,
+                        title=ing_names[i],
+                        dimension=ing_units[i]
+                    )
+                    RecipeIngredient.objects.get_or_create(
+                        recipe=recipe,
+                        ingredient=ingredient,
+                        amount=ing_values[i])
+            else:
+                return redirect('new_recipe')
+        else:
+            return render(request, 'recipe_form.html', context={'form': form, 'recipe': recipe})
+        return redirect('recipe', username=recipe.author, slug=recipe.slug)
+
+
+@login_required
+def delete_recipe(request, username, slug):
+    recipe = get_object_or_404(Recipe, slug=slug)
+    if recipe.author != request.user:
+        return redirect('recipe', username=recipe.author, slug=recipe.slug)
+    recipe.delete()
+    return redirect('index')
 
 
 # operating requests
@@ -80,3 +171,16 @@ def list_ingredients(request):
     query = request.GET.get('query').lower()
     ingredients = Ingredient.objects.filter(title__icontains=query).values('title', 'dimension')
     return JsonResponse(list(ingredients), safe=False)
+
+
+def edit_tag(request, tag, previous):
+    tags = request.session.get('tag_list')
+    if tag in tags:
+        tags.remove(tag)
+    else:
+        tags.append(tag)
+    if not tags:
+        request.session['tag_list'] = ['breakfast', 'lunch', 'dinner']
+    else:
+        request.session['tag_list'] = tags
+    return redirect(previous)
