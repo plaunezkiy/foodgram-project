@@ -1,0 +1,17 @@
+.form__file-button {
+    display: inline-block;
+    background: #DEDEDE;
+    border-radius: 6px;
+    font-family: 'Montserrat', sans-serif;
+    font-style: normal;
+    font-weight: normal;
+    font-size: 18px;
+    line-height: 22px;
+    color: #000000;
+    padding:  13px 24px;
+    width: max-content;
+    transition: background 0.2s;
+}
+.form__file-button:hover {
+    background: #BFBFBF;
+}

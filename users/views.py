@@ -3,7 +3,7 @@ from django.views.generic import CreateView, View
 from django.urls import reverse_lazy
 
 from .forms import SignUpForm
-from .models import User
+from .models import get_user_model
 from recipes.models import Recipe
 from recipes.mixins import MainMixin
 
@@ -14,7 +14,7 @@ class ProfileView(MainMixin, View):
     profile = True
 
     def get(self, request, username):
-        user = get_object_or_404(User, username=username)
+        user = get_object_or_404(get_user_model(), username=username)
         self.title = user.get_full_name()
         self.queryset = Recipe.objects.filter(author=user)
         return super(ProfileView, self).get(request)

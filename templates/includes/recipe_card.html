@@ -19,7 +19,12 @@
         </div>
     </div>
     <div class="card__footer">
+        {% if item.id|stringformat:'i' in request.session.purchases %}
+        <button class="button button_style_light-blue-outline" name="purchases"><span class="icon-check button__icon"></span>Рецепт добавлен</button>
+        {% else %}
         <button class="button button_style_light-blue" name="purchases" data-out><span class="icon-plus button__icon"></span>Добавить в покупки</button>
+        {% endif %}
+
         {% if user.is_authenticated %}
             {% if item|check_fav:user %}
                 <button class="button button_style_none" name="favorites"><span class="icon-favorite icon-favorite_active"></span></button>

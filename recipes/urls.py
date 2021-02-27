@@ -5,6 +5,9 @@ from . import views
 
 urlpatterns = [
     path('', views.IndexView.as_view(), name='index'),
+    path('purchases/', views.PurchaseView.as_view(), name='purchases'),
+    path('purchases/download/', views.download_purchases, name='download_purchases'),
+    path('purchases/<int:recipe_id>/', views.PurchaseView.as_view(), name='remove_purchase'),
 
     path('new/', views.CreateRecipeView.as_view(), name='new_recipe'),
     path('user/<str:username>/<slug:slug>/', views.single_recipe, name='recipe'),
@@ -18,5 +21,5 @@ urlpatterns = [
     path('subscriptions/<int:user_id>/', views.SubscribeView.as_view(), name='remove_subscription'),
 
     path('favorites/', views.FavoriteView.as_view(), name='favorites'),
-    path('favorites/<int:recipe_id>/', views.FavoriteView.as_view(), name='remove_favorite')
+    path('favorites/<int:recipe_id>/', views.FavoriteView.as_view(), name='remove_favorite'),
 ]

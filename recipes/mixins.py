@@ -13,6 +13,7 @@ class MainMixin:
     profile = False
 
     def get(self, request):
+        request.session.setdefault('purchases', value=[])
         items = self.queryset
         if self.tags:
             request.session.setdefault(

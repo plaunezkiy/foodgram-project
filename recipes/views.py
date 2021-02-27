@@ -8,7 +8,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from pytils.translit import slugify
 from django.views.generic import View
 
-from users.models import User, Favorite, Follow
+from users.models import get_user_model, Favorite, Follow
 from .forms import RecipeForm
 from .models import Ingredient, Recipe, RecipeIngredient
 from .mixins import MainMixin
@@ -51,24 +51,53 @@ class SubscribeView(LoginRequiredMixin, MainMixin, View):
 
     def get(self, request):
         subs = Follow.objects.filter(user=request.user)
-        self.queryset = User.objects.filter(id__in=subs.values('author_id'))
+        self.queryset = get_user_model().objects.filter(id__in=subs.values('author_id'))
         return super(SubscribeView, self).get(request)
 
     def post(self, request):
         data = json.loads(request.body)
         recipe_id = data['id']
-        author = get_object_or_404(User, id=recipe_id)
+        author = get_object_or_404(get_user_model(), id=recipe_id)
         obj, created = Follow.objects.get_or_create(author=author, user=request.user)
         return JsonResponse(data={'success': bool(created)}, safe=True)
 
     def delete(self, request, user_id):
-        author = get_object_or_404(User, id=user_id)
+        author = get_object_or_404(get_user_model(), id=user_id)
         get_object_or_404(Follow, author=author, user=request.user).delete()
         return JsonResponse(data={'success': True}, safe=True)
 
 
+class PurchaseView(MainMixin, View):
+    template = 'shop_list.html'
+    title = 'Список покупок'
+    tab = 'purchases'
+
+    def get(self, request):
+        return super(PurchaseView, self).get(request)
+
+    def post(self, request):
+        data = json.loads(request.body)
+        recipe_id = data['id']
+        get_object_or_404(Recipe, id=recipe_id)
+        purchases = request.session['purchases']
+        if recipe_id not in purchases:
+            purchases.append(recipe_id)
+            request.session['purchases'] = purchases
+            return JsonResponse(data={'success': True}, safe=True)
+        return JsonResponse(data={'success': False}, safe=True)
+
+    def delete(self, request, recipe_id):
+        get_object_or_404(Recipe, id=recipe_id)
+        purchases = request.session['purchases']
+        if str(recipe_id) in purchases:
+            purchases.remove(str(recipe_id))
+            request.session['purchases'] = purchases
+            return JsonResponse(data={'success': True}, safe=True)
+        return JsonResponse(data={'success': False}, safe=True)
+
+
 def single_recipe(request, username, slug):
-    user = get_object_or_404(User, username=username)
+    user = get_object_or_404(get_user_model(), username=username)
     recipe = get_object_or_404(Recipe, slug=slug, author=user)
     return render(request, 'single_page.html', context={'recipe': recipe})
 
@@ -114,7 +143,7 @@ class CreateRecipeView(LoginRequiredMixin, View):
 class EditRecipeView(LoginRequiredMixin, View):
     login_url = '/login/'
 
-    def get(self, request, slug):
+    def get(self, request, username, slug):
         recipe = get_object_or_404(Recipe, slug=slug)
         if recipe.author != request.user:
             return redirect('recipe', username=recipe.author, slug=recipe.slug)
@@ -123,7 +152,7 @@ class EditRecipeView(LoginRequiredMixin, View):
         return render(request, 'recipe_form.html', context={'form': form, 'recipe': recipe})
 
     def post(self, request, username, slug):
-        get_object_or_404(User, username=username)
+        get_object_or_404(get_user_model(), username=username)
         recipe = get_object_or_404(Recipe, slug=slug)
         if recipe.author != request.user:
             return redirect('recipe', username=recipe.author, slug=recipe.slug)
@@ -184,3 +213,31 @@ def edit_tag(request, tag, previous):
     else:
         request.session['tag_list'] = tags
     return redirect(previous)
+
+
+def download_purchases(request):
+    filename = "purchase_list.txt"
+    ids = request.session['purchases']
+    all_ingredients = RecipeIngredient.objects.filter(recipe_id__in=ids)
+    ingredients = {}
+    for ingredient in all_ingredients:
+        if ingredient.ingredient.title in ingredients.keys():
+            ingredients[ingredient.ingredient.title][0] += ingredient.amount
+        else:
+            ingredients[ingredient.ingredient.title] = [ingredient.amount, ingredient.ingredient.dimension]
+
+    content = ['Shopping list by Foodgram\n\n']
+    for i, v in ingredients.items():
+        content.append(f'{i.capitalize()} - {v[0]}{v[1]}\n')
+
+    response = HttpResponse(content, content_type='text/plain')
+    response['Content-Disposition'] = 'attachment; filename={0}'.format(filename)
+    return response
+
+
+def page_not_found(request, exception):
+    return render(request, "404.html", {"path": request.path}, status=404)
+
+
+def server_error(request):
+    return render(request, "500.html", status=500)

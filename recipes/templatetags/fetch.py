@@ -13,3 +13,9 @@ def latest(author, n):
 @register.filter
 def get_followed(user):
     return user.follower.all().values_list('author', flat=True)
+
+
+@register.filter
+def get_recipes(ids):
+    recipes = Recipe.objects.filter(id__in=ids)
+    return recipes

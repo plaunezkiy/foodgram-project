@@ -3,7 +3,6 @@ from django.db import models
 from django.contrib.auth import get_user_model
 from multiselectfield import MultiSelectField
 
-User = get_user_model()
 TAGS = (
     ('breakfast', 'Завтрак'),
     ('lunch', 'Обед'),
@@ -29,13 +28,13 @@ class Recipe(models.Model):
     description = models.TextField(blank=True, null=True)
     slug = models.SlugField(unique=True, blank=True, null=True)
     tags = MultiSelectField(choices=TAGS, blank=True, null=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recipes')
+    author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='recipes')
     cooking_time = models.PositiveIntegerField()
     image = models.ImageField(upload_to='media/recipes/', blank=True, null=True)
     pub_date = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return self.name
+        return f'{self.name} - {self.author}'
 
     @property
     def get_image_name(self):
