@@ -28,9 +28,12 @@ class Recipe(models.Model):
     description = models.TextField(blank=True, null=True)
     slug = models.SlugField(unique=True, blank=True, null=True)
     tags = MultiSelectField(choices=TAGS, blank=True, null=True)
-    author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='recipes')
+    author = models.ForeignKey(get_user_model(),
+                               on_delete=models.CASCADE,
+                               related_name='recipes')
     cooking_time = models.PositiveIntegerField()
-    image = models.ImageField(upload_to='media/recipes/', blank=True, null=True)
+    image = models.ImageField(upload_to='media/recipes/',
+                              blank=True, null=True)
     pub_date = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -47,7 +50,9 @@ class Recipe(models.Model):
 
 
 class RecipeIngredient(models.Model):
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='ingredients')
+    recipe = models.ForeignKey(Recipe,
+                               on_delete=models.CASCADE,
+                               related_name='ingredients')
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE)
     amount = models.PositiveIntegerField()
 
@@ -56,4 +61,5 @@ class RecipeIngredient(models.Model):
         verbose_name_plural = 'Ингридиенты к рецептам'
 
     def __str__(self):
-        return f'{self.recipe.name} - {self.ingredient.title} - {self.ingredient.dimension}'
+        return f'{self.recipe.name} - {self.ingredient.title} - ' \
+               f'{self.ingredient.dimension}'

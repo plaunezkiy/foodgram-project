@@ -5,8 +5,12 @@ from recipes.models import Recipe
 
 
 class Follow(models.Model):
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name="follower")
-    author = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name="following")
+    user = models.ForeignKey(get_user_model(),
+                             on_delete=models.CASCADE,
+                             related_name="follower")
+    author = models.ForeignKey(get_user_model(),
+                               on_delete=models.CASCADE,
+                               related_name="following")
 
     class Meta:
         verbose_name = 'Подписка'
@@ -18,8 +22,10 @@ class Follow(models.Model):
 
 
 class Favorite(models.Model):
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='favorite_follower')
-    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name='favorite_recipe')
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE,
+                               related_name='favorite_follower')
+    user = models.ForeignKey(get_user_model(), on_delete=models.CASCADE,
+                             related_name='favorite_recipe')
 
     class Meta:
         verbose_name = 'Любимый рецепт'

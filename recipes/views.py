@@ -33,7 +33,8 @@ class FavoriteView(LoginRequiredMixin, MainMixin, View):
         data = json.loads(request.body)
         recipe_id = data['id']
         recipe = get_object_or_404(Recipe, id=recipe_id)
-        obj, created = Favorite.objects.get_or_create(recipe=recipe, user=request.user)
+        obj, created = Favorite.objects.\
+            get_or_create(recipe=recipe, user=request.user)
         return JsonResponse(data={'success': bool(created)}, safe=True)
 
     def delete(self, request, recipe_id):
@@ -51,14 +52,16 @@ class SubscribeView(LoginRequiredMixin, MainMixin, View):
 
     def get(self, request):
         subs = Follow.objects.filter(user=request.user)
-        self.queryset = get_user_model().objects.filter(id__in=subs.values('author_id'))
+        self.queryset = get_user_model().\
+            objects.filter(id__in=subs.values('author_id'))
         return super(SubscribeView, self).get(request)
 
     def post(self, request):
         data = json.loads(request.body)
         recipe_id = data['id']
         author = get_object_or_404(get_user_model(), id=recipe_id)
-        obj, created = Follow.objects.get_or_create(author=author, user=request.user)
+        obj, created = Follow.objects.\
+            get_or_create(author=author, user=request.user)
         return JsonResponse(data={'success': bool(created)}, safe=True)
 
     def delete(self, request, user_id):
@@ -149,7 +152,8 @@ class EditRecipeView(LoginRequiredMixin, View):
             return redirect('recipe', username=recipe.author, slug=recipe.slug)
 
         form = RecipeForm(instance=recipe)
-        return render(request, 'recipe_form.html', context={'form': form, 'recipe': recipe})
+        return render(request, 'recipe_form.html',
+                      context={'form': form, 'recipe': recipe})
 
     def post(self, request, username, slug):
         get_object_or_404(get_user_model(), username=username)
@@ -180,7 +184,8 @@ class EditRecipeView(LoginRequiredMixin, View):
             else:
                 return redirect('new_recipe')
         else:
-            return render(request, 'recipe_form.html', context={'form': form, 'recipe': recipe})
+            return render(request, 'recipe_form.html',
+                          context={'form': form, 'recipe': recipe})
         return redirect('recipe', username=recipe.author, slug=recipe.slug)
 
 
@@ -198,7 +203,8 @@ def delete_recipe(request, username, slug):
 
 def list_ingredients(request):
     query = request.GET.get('query').lower()
-    ingredients = Ingredient.objects.filter(title__icontains=query).values('title', 'dimension')
+    ingredients = Ingredient.objects.\
+        filter(title__icontains=query).values('title', 'dimension')
     return JsonResponse(list(ingredients), safe=False)
 
 
@@ -224,14 +230,16 @@ def download_purchases(request):
         if ingredient.ingredient.title in ingredients.keys():
             ingredients[ingredient.ingredient.title][0] += ingredient.amount
         else:
-            ingredients[ingredient.ingredient.title] = [ingredient.amount, ingredient.ingredient.dimension]
+            ingredients[ingredient.ingredient.title] = \
+                [ingredient.amount, ingredient.ingredient.dimension]
 
     content = ['Shopping list by Foodgram\n\n']
     for i, v in ingredients.items():
         content.append(f'{i.capitalize()} - {v[0]}{v[1]}\n')
 
     response = HttpResponse(content, content_type='text/plain')
-    response['Content-Disposition'] = 'attachment; filename={0}'.format(filename)
+    response['Content-Disposition'] = \
+        'attachment; filename={0}'.format(filename)
     return response
 
 

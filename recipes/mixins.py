@@ -32,8 +32,7 @@ class MainMixin:
         return render(
             request,
             self.template,
-            context=
-            {
+            context={
                 'title': self.title,
                 'tab': self.tab,
                 'page': page,
