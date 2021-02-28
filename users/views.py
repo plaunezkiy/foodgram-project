@@ -10,7 +10,7 @@ from recipes.mixins import MainMixin
 
 class ProfileView(MainMixin, View):
     template = 'profile.html'
-    tab = 'recipes'
+    tab = 'profile'
     profile = True
 
     def get(self, request, username):
