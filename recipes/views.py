@@ -16,7 +16,7 @@ from .mixins import MainMixin
 
 class IndexView(MainMixin, View):
     title = 'Рецепты'
-    tab = 'recipes'
+    tab = 'index'
 
 
 class FavoriteView(LoginRequiredMixin, MainMixin, View):

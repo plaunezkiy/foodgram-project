@@ -21,7 +21,7 @@ urlpatterns = [
          name='delete_recipe'),
 
     path('ingredients/', views.list_ingredients, name='list_ingredients'),
-    path('tag/<str:tag>/?prev=<path:previous>/', views.edit_tag,
+    path('tag/<str:tag>/<str:previous>/', views.edit_tag,
          name='edit_tag'),
 
     path('subscriptions/', views.SubscribeView.as_view(),

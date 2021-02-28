@@ -2,7 +2,7 @@
     <nav class="nav">
         <div class="nav__container container">
             <ul class="nav__items list">
-                <li class="nav__item {% if tab == 'recipes' %}nav__item_active{% endif %}">
+                <li class="nav__item {% if tab in ['recipes', 'index'] %}nav__item_active{% endif %}">
                     <a href="{% url 'index' %}" class="nav__link link">Рецепты</a>
                 </li>
                 {% if user.is_authenticated %}
