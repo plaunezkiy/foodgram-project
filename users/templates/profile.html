@@ -50,15 +50,7 @@
 {% if profile and user != page.0.author %}
 <div class="author-subscribe" data-author="{{page.0.author.pk}}">
     <p style="padding: 0 0 2em 0;">
-        {% if page.0.author.pk in user|get_followed %}
-        <button class="button button_style_light-blue button_size_subscribe" name="subscribe">
-            Отписаться от автора
-        </button>
-        {% else %}
-        <button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>
-            Подписаться на автора
-        </button>
-        {% endif %}
+        {% include 'follow_but.html' with key=page.0.author.pk %}
     </p>
 </div>
 {% endif %}

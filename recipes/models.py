@@ -1,4 +1,6 @@
 import os
+
+from django.core.validators import MinValueValidator
 from django.db import models
 from django.contrib.auth import get_user_model
 from multiselectfield import MultiSelectField
@@ -18,8 +20,8 @@ class Ingredient(models.Model):
         return f'{self.title} / {self.dimension}'
 
     class Meta:
-        verbose_name = 'Ингридиент'
-        verbose_name_plural = 'Ингридиенты'
+        verbose_name = 'Ингредиент'
+        verbose_name_plural = 'Ингредиенты'
         ordering = ['title']
 
 
@@ -31,7 +33,7 @@ class Recipe(models.Model):
     author = models.ForeignKey(get_user_model(),
                                on_delete=models.CASCADE,
                                related_name='recipes')
-    cooking_time = models.PositiveIntegerField()
+    cooking_time = models.PositiveIntegerField(validators=[MinValueValidator(1)])
     image = models.ImageField(upload_to='media/recipes/',
                               blank=True, null=True)
     pub_date = models.DateTimeField(auto_now=True)
@@ -57,8 +59,9 @@ class RecipeIngredient(models.Model):
     amount = models.PositiveIntegerField()
 
     class Meta:
-        verbose_name = 'Ингридиент к рецептам'
-        verbose_name_plural = 'Ингридиенты к рецептам'
+        verbose_name = 'Ингредиент к рецептам'
+        verbose_name_plural = 'Ингредиенты к рецептам'
+        unique_together = ("recipe", "ingredient")
 
     def __str__(self):
         return f'{self.recipe.name} - {self.ingredient.title} - ' \

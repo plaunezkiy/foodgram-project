@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.shortcuts import render
 from django.core.paginator import Paginator
 from django.db.models import Q
@@ -18,7 +19,7 @@ class MainMixin:
         if self.tags:
             request.session.setdefault(
                 'tag_list',
-                value=['breakfast', 'lunch', 'dinner']
+                value=settings.TAGS
             )
             tag_list = request.session['tag_list']
             query = Q()
@@ -26,7 +27,7 @@ class MainMixin:
                 query.add(Q(tags__contains=i), Q.OR)
             items = items.filter(query)
 
-        paginator = Paginator(items, 6)
+        paginator = Paginator(items, settings.PAGINATOR_NUM_PER_PAGE)
         page_number = request.GET.get('page')
         page = paginator.get_page(page_number)
         return render(

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Технологии{% endblock %}
+
+{% load static %}
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'pages/form.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="main__header">
+    <h1 class="main__title">Технологии</h1>
+</div>
+<div class="form-container">
+    <form class="form">
+        <p class="form__info-text">Чтобы сделать этот проект, потребовалось много разных технологий.</p>
+        <p class="form__info-text">Вот список:</p>
+
+        <ul class="form__item-list">
+            <li class="form__info-text"><a href="https://www.python.org/" style="text-decoration:none">Python 3.7</a></li>
+            <li class="form__info-text"><a href="https://www.djangoproject.com/" style="text-decoration:none">Django 3.1</a></li>
+            <li class="form__info-text"><a href="https://www.postgresql.org/" style="text-decoration:none">PostgreSQL</a></li>
+            <li class="form__info-text"><a href="https://www.docker.com/" style="text-decoration:none">Docker</a></li>
+            <li class="form__info-text"><a href="https://docs.docker.com/compose/" style="text-decoration:none">Docker Compose</a></li>
+            <li class="form__info-text"><a href="https://nginx.org/" style="text-decoration:none">NGINX</a></li>
+
+        </ul>
+    </form>
+</div>
+{% endblock %}

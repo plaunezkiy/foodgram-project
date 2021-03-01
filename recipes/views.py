@@ -25,8 +25,7 @@ class FavoriteView(LoginRequiredMixin, MainMixin, View):
     tab = 'favorites'
 
     def get(self, request):
-        favs = Favorite.objects.filter(user=request.user)
-        self.queryset = Recipe.objects.filter(id__in=favs.values('recipe_id'))
+        self.queryset = Recipe.objects.filter(favorite__user=request.user)
         return super(FavoriteView, self).get(request)
 
     def post(self, request):
@@ -238,14 +237,24 @@ def download_purchases(request):
         content.append(f'{i.capitalize()} - {v[0]}{v[1]}\n')
 
     response = HttpResponse(content, content_type='text/plain')
+    if not len(ingredients.keys()):
+        return redirect('purchases')
     response['Content-Disposition'] = \
         'attachment; filename={0}'.format(filename)
     return response
 
 
+def about(request):
+    return render(request, 'misc/about.html')
+
+
+def spec(request):
+    return render(request, 'misc/spec.html')
+
+
 def page_not_found(request, exception):
-    return render(request, "404.html", {"path": request.path}, status=404)
+    return render(request, 'misc/404.html', {'path': request.path}, status=404)
 
 
 def server_error(request):
-    return render(request, "500.html", status=500)
+    return render(request, 'misc/500.html', status=500)

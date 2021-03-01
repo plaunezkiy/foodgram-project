@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Об авторе{% endblock %}
+
+{% load static %}
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'pages/form.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="main__header">
+    <h1 class="main__title">Привет!</h1>
+</div>
+<div class="form-container">
+    <form class="form">
+        <p class="form__info-text">Меня зовут Никита и я очень люблю кодить!</p>
+        <p class="form__info-text">Связаться со мной можно тут
+            <a href="https://github.com/plaunezkiy/" target="_blank">клик</a> и тут
+            <a href="https://vk.com/pelinchat/" target="_blank">клац</a>.
+        </p>
+    </form>
+</div>
+{% endblock %}

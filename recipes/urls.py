@@ -32,4 +32,7 @@ urlpatterns = [
     path('favorites/', views.FavoriteView.as_view(), name='favorites'),
     path('favorites/<int:recipe_id>/', views.FavoriteView.as_view(),
          name='remove_favorite'),
+
+    path('about/', views.about, name='about'),
+    path('spec/', views.spec, name='spec'),
 ]

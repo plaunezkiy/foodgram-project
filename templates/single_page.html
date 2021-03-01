@@ -53,18 +53,12 @@
                 </div>
                 <ul class="single-card__items">
                     <li class="single-card__item">
-                        {% if recipe.id|stringformat:'i' in request.session.purchases %}
-                        <button class="button button_style_blue-outline button_style_light-blue-outline" name="purchases"><span class="icon-check button__icon"></span> Рецепт добавлен</button>
-                        {% else %}
-                        <button class="button button_style_blue" name="purchases" data-out><span class="icon-plus"></span>Добавить в покупки</button>
-                        {% endif %}
+                        {% include 'shoplist_but.html' with light=False %}
                     </li>
                     {% if recipe.author != user %}
-                    {% if recipe.author.pk in user|get_followed %}
-                    <li class="single-card__item"><button class="button button_style_light-blue button_size_subscribe" name="subscribe">Отписаться от автора</button></li>
-                    {% else %}
-                    <li class="single-card__item"><button class="button button_style_light-blue button_size_subscribe" name="subscribe" data-out>Подписаться на автора</button></li>
-                    {% endif %}
+                        <li class="single-card__item">
+                            {% include 'follow_but.html' with key=recipe.author.pk %}
+                        </li>
                     {% endif %}
                 </ul>
                 <div class="single-card__section">
