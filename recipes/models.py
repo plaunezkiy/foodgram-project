@@ -43,7 +43,10 @@ class Recipe(models.Model):
 
     @property
     def get_image_name(self):
-        return os.path.basename(self.image.url or None)
+        try:
+            return os.path.basename(self.image.url)
+        except:
+            return None
 
     class Meta:
         verbose_name = 'Рецепт'
