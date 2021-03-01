@@ -17,14 +17,14 @@
         <div class="form__group">
             <label for="id_first_name" class="form__label">Имя</label>
             <div class="form__field-group">
-                <input type="text" name="first_name" id="id_first_name" class="form__input">
+                <input type="text" required name="first_name" id="id_first_name" class="form__input">
                 <span class="form__error"></span>
             </div>
         </div>
         <div class="form__group">
             <label for="id_last_name" class="form__label">Фамилия</label>
             <div class="form__field-group">
-                <input type="text" name="last_name" id="id_last_name" class="form__input">
+                <input type="text" required name="last_name" id="id_last_name" class="form__input">
                 <span class="form__error"></span>
             </div>
         </div>
@@ -42,7 +42,7 @@
         <div class="form__group">
             <label for="id_email" class="form__label">Адрес электронной почты</label>
             <div class="form__field-group">
-                <input type="email" name="email" id="id_email" class="form__input">
+                <input type="email" required name="email" id="id_email" class="form__input">
                 {% if form.errors.email %}
                 <span class="form__error">{{ form.errors.email }}</span>
                 {% endif %}
