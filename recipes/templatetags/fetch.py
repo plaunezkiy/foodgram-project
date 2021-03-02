@@ -19,3 +19,16 @@ def get_followed(user):
 def get_recipes(ids):
     recipes = Recipe.objects.filter(id__in=ids)
     return recipes
+
+
+@register.filter
+def declination(counter):
+    counter -= 3
+    div, remainder = divmod(counter, 10)
+    if div == remainder == 1:
+        return f'{counter} рецептов'
+    if remainder == 1:
+        return f'{counter} рецепт'
+    if 2 <= remainder <= 4:
+        return f'{counter} рецепта'
+    return f'{counter} рецептов'

@@ -22,6 +22,7 @@
     {% csrf_token %}
 </div>
 <div class="card-list card-list_column">
+    {% if request.session.purchases|get_recipes %}
     <ul class="shopping-list">
         {% for recipe in request.session.purchases|get_recipes %}
             <li class="shopping-list__item" data-id="{{recipe.id}}">
@@ -37,6 +38,7 @@
         {% endfor %}
     </ul>
     <a href="{% url 'download_purchases' %}"><button class="button button_style_blue">Скачать список</button></a>
+    {% endif %}
 
 
 </div>

@@ -21,7 +21,7 @@ class MainMixin:
                 'tag_list',
                 value=settings.TAGS
             )
-            tag_list = request.session['tag_list']
+            tag_list = request.session['tag_list'] or settings.TAGS
             query = Q()
             for i in tag_list:
                 query.add(Q(tags__contains=i), Q.OR)

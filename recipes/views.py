@@ -1,5 +1,5 @@
 import json
-
+from http import HTTPStatus
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 
@@ -50,9 +50,8 @@ class SubscribeView(LoginRequiredMixin, MainMixin, View):
     tags = False
 
     def get(self, request):
-        subs = Follow.objects.filter(user=request.user)
-        self.queryset = get_user_model().\
-            objects.filter(id__in=subs.values('author_id'))
+        self.queryset = get_user_model()\
+            .objects.filter(following__user=request.user)
         return super(SubscribeView, self).get(request)
 
     def post(self, request):
@@ -82,20 +81,22 @@ class PurchaseView(MainMixin, View):
         recipe_id = data['id']
         get_object_or_404(Recipe, id=recipe_id)
         purchases = request.session['purchases']
+        success = False
         if recipe_id not in purchases:
             purchases.append(recipe_id)
             request.session['purchases'] = purchases
-            return JsonResponse(data={'success': True}, safe=True)
-        return JsonResponse(data={'success': False}, safe=True)
+            success = True
+        return JsonResponse(data={'success': success}, safe=True)
 
     def delete(self, request, recipe_id):
         get_object_or_404(Recipe, id=recipe_id)
         purchases = request.session['purchases']
+        success = False
         if str(recipe_id) in purchases:
             purchases.remove(str(recipe_id))
             request.session['purchases'] = purchases
-            return JsonResponse(data={'success': True}, safe=True)
-        return JsonResponse(data={'success': False}, safe=True)
+            success = True
+        return JsonResponse(data={'success': success}, safe=True)
 
 
 def single_recipe(request, username, slug):
@@ -146,7 +147,7 @@ class EditRecipeView(LoginRequiredMixin, View):
     login_url = '/login/'
 
     def get(self, request, username, slug):
-        recipe = get_object_or_404(Recipe, slug=slug)
+        recipe = get_object_or_404(Recipe, slug=slug, author__username=username)
         if recipe.author != request.user:
             return redirect('recipe', username=recipe.author, slug=recipe.slug)
 
@@ -203,7 +204,7 @@ def delete_recipe(request, username, slug):
 def list_ingredients(request):
     query = request.GET.get('query').lower()
     ingredients = Ingredient.objects.\
-        filter(title__icontains=query).values('title', 'dimension')
+        filter(title__istartswith=query).values('title', 'dimension')
     return JsonResponse(list(ingredients), safe=False)
 
 
@@ -213,10 +214,7 @@ def edit_tag(request, tag, previous):
         tags.remove(tag)
     else:
         tags.append(tag)
-    if not tags:
-        request.session['tag_list'] = ['breakfast', 'lunch', 'dinner']
-    else:
-        request.session['tag_list'] = tags
+    request.session['tag_list'] = tags
     return redirect(previous)
 
 
@@ -253,8 +251,8 @@ def spec(request):
 
 
 def page_not_found(request, exception):
-    return render(request, 'misc/404.html', {'path': request.path}, status=404)
+    return render(request, 'misc/404.html', {'path': request.path}, status=HTTPStatus.NOT_FOUND)
 
 
 def server_error(request):
-    return render(request, 'misc/500.html', status=500)
+    return render(request, 'misc/500.html', status=HTTPStatus.INTERNAL_SERVER_ERROR)

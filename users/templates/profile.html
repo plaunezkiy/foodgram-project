@@ -19,6 +19,11 @@
 {% block content %}
 <div class="main__header">
     <h1 class="main__title">{{ title }}</h1>
+
+    {% if user == page.0.author %}
+        <a class="button button_style_light-blue" href="{% url 'edit_profile' user %}">Редактировать профиль</a>
+    {% endif %}
+
     {% csrf_token %}
     {% if tags %}
     <ul class="tags">

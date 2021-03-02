@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Изменить профиль{% endblock %}
+
+{% block stylesheet %}
+<link rel="stylesheet" href="{% static 'pages/form.css' %}">
+{% endblock %}
+
+{% block content %}
+<div class="form-container">
+    <form method="post" class="form">
+        {% csrf_token %}
+        <div class="form__group">
+            <label for="id_first_name" class="form__label">Имя</label>
+            <div class="form__field-group">
+                <input type="text" name="first_name" id="id_first_name" class="form__input" value="{{ form.first_name.value }}">
+                <span class="form__error">{{ form.errors.first_name }}</span>
+                <small class="form__input-info">{{ form.first_name.help_text }}</small>
+            </div>
+        </div>
+        <div class="form__group">
+            <label for="id_last_name" class="form__label">Фамилия</label>
+            <div class="form__field-group">
+                <input type="text" name="last_name" id="id_last_name" class="form__input" value="{{ form.last_name.value }}">
+                <span class="form__error">{{ form.errors.last_name }}</span>
+                <small class="form__input-info">{{ form.last_name.help_text }}</small>
+            </div>
+        </div>
+        <div class="form__group">
+            <label for="id_email" class="form__label">Email</label>
+            <div class="form__field-group">
+                <input type="text" name="email" id="id_email" class="form__input" value="{{ form.email.value }}">
+                <span class="form__error">{{ form.errors.email }}</span>
+                <small class="form__input-info">{{ form.email.help_text }}</small>
+            </div>
+        </div>
+        <div class="form__footer">
+            <button class="button button_style_blue">Сохранить</button>
+        </div>
+    </form>
+</div>
+{% endblock %}

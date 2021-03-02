@@ -13,6 +13,7 @@ class Follow(models.Model):
                                related_name="following")
 
     class Meta:
+        ordering = ['-author']
         verbose_name = 'Подписка'
         verbose_name_plural = 'Подписки'
         unique_together = ('user', 'author')
