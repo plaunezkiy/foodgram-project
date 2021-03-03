@@ -139,5 +139,11 @@ EMAIL_BACKEND = 'django.core.mail.backends.filebased.EmailBackend'
 EMAIL_FILE_PATH = os.path.join(BASE_DIR, 'sent_emails')
 
 TAGS = ['breakfast', 'lunch', 'dinner']
+TAGS_CLASSES = {
+    'breakfast': ['orange', 'Завтрак'],
+    'lunch': ['green', 'Обед'],
+    'dinner': ['purple', 'Ужин'],
+}
+
 PAGINATOR_NUM_PER_PAGE = 6
 

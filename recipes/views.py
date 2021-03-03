@@ -73,12 +73,12 @@ class PurchaseView(MainMixin, View):
     title = 'Список покупок'
     tab = 'purchases'
 
-    def get(self, request):
-        return super(PurchaseView, self).get(request)
-
     def post(self, request):
         data = json.loads(request.body)
-        recipe_id = data['id']
+        try:
+            recipe_id = data['id']
+        except:
+            return HttpResponse(status=HTTPStatus.BAD_REQUEST)
         get_object_or_404(Recipe, id=recipe_id)
         purchases = request.session['purchases']
         success = False
