@@ -7,7 +7,7 @@ from .models import Recipe
 
 
 class MainMixin:
-    template = 'main.html'
+    template = 'recipes/main.html'
     card_template = 'recipe_card.html'
     queryset = Recipe.objects.all()
     tags = True

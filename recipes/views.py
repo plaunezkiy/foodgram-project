@@ -69,7 +69,7 @@ class SubscribeView(LoginRequiredMixin, MainMixin, View):
 
 
 class PurchaseView(MainMixin, View):
-    template = 'shop_list.html'
+    template = 'recipes/shop_list.html'
     title = 'Список покупок'
     tab = 'purchases'
 
@@ -102,7 +102,7 @@ class PurchaseView(MainMixin, View):
 def single_recipe(request, username, slug):
     user = get_object_or_404(get_user_model(), username=username)
     recipe = get_object_or_404(Recipe, slug=slug, author=user)
-    return render(request, 'single_page.html', context={'recipe': recipe})
+    return render(request, 'recipes/single_page.html', context={'recipe': recipe})
 
 
 class CreateRecipeView(LoginRequiredMixin, View):
@@ -110,7 +110,7 @@ class CreateRecipeView(LoginRequiredMixin, View):
 
     def get(self, request):
         form = RecipeForm()
-        return render(request, 'recipe_form.html', context={'form': form})
+        return render(request, 'recipes/recipe_form.html', context={'form': form})
 
     def post(self, request):
         form = RecipeForm(request.POST, files=request.FILES)
@@ -138,7 +138,7 @@ class CreateRecipeView(LoginRequiredMixin, View):
             else:
                 return redirect('new_recipe')
         else:
-            return render(request, 'recipe_form.html', context={'form': form})
+            return render(request, 'recipes/recipe_form.html', context={'form': form})
 
         return redirect('recipe', username=recipe.author, slug=recipe.slug)
 
@@ -152,7 +152,7 @@ class EditRecipeView(LoginRequiredMixin, View):
             return redirect('recipe', username=recipe.author, slug=recipe.slug)
 
         form = RecipeForm(instance=recipe)
-        return render(request, 'recipe_form.html',
+        return render(request, 'recipes/recipe_form.html',
                       context={'form': form, 'recipe': recipe})
 
     def post(self, request, username, slug):
@@ -184,7 +184,7 @@ class EditRecipeView(LoginRequiredMixin, View):
             else:
                 return redirect('new_recipe')
         else:
-            return render(request, 'recipe_form.html',
+            return render(request, 'recipes/recipe_form.html',
                           context={'form': form, 'recipe': recipe})
         return redirect('recipe', username=recipe.author, slug=recipe.slug)
 
