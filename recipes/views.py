@@ -217,14 +217,15 @@ def list_ingredients(request):
     return JsonResponse(list(ingredients), safe=False)
 
 
-def edit_tag(request, tag, previous):
+def edit_tag(request, tag):
+    previous_url = request.META.get('HTTP_REFERER')
     tags = request.session.get('tag_list')
     if tag in tags:
         tags.remove(tag)
     else:
         tags.append(tag)
     request.session['tag_list'] = tags
-    return redirect(previous)
+    return redirect(previous_url)
 
 
 def download_purchases(request):
