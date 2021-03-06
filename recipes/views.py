@@ -122,8 +122,9 @@ class CreateRecipeView(LoginRequiredMixin, View):
             recipe = form.save(commit=False)
             recipe.author = request.user
             recipe.slug = slugify(recipe.name)
-            recipe.save()
-            if len(ing_names) == len(ing_units) == len(ing_values):
+
+            if len(ing_names) == len(ing_units) == len(ing_values) != 0:
+                recipe.save()
                 counter = len(ing_names)
                 for i in range(counter):
                     ingredient = get_object_or_404(
@@ -136,7 +137,11 @@ class CreateRecipeView(LoginRequiredMixin, View):
                         ingredient=ingredient,
                         amount=ing_values[i])
             else:
-                return redirect('new_recipe')
+                return render(request, 'recipes/recipe_form.html',
+                              context={
+                                  'form': form,
+                                  'ing_error': 'Добавьте ингредиентов'
+                              })
         else:
             return render(request, 'recipes/recipe_form.html', context={'form': form})
 
@@ -167,8 +172,8 @@ class EditRecipeView(LoginRequiredMixin, View):
             ing_values = request.POST.getlist('valueIngredient')
             ing_units = request.POST.getlist('unitsIngredient')
 
-            form.save()
-            if len(ing_names) == len(ing_units) == len(ing_values):
+            if len(ing_names) == len(ing_units) == len(ing_values) != 0:
+                form.save()
                 RecipeIngredient.objects.filter(recipe=recipe).delete()
                 counter = len(ing_names)
                 for i in range(counter):
@@ -182,7 +187,11 @@ class EditRecipeView(LoginRequiredMixin, View):
                         ingredient=ingredient,
                         amount=ing_values[i])
             else:
-                return redirect('new_recipe')
+                return render(request, 'recipes/recipe_form.html',
+                              context={
+                                  'form': form,
+                                  'ing_error': 'Добавьте ингредиентов'
+                              })
         else:
             return render(request, 'recipes/recipe_form.html',
                           context={'form': form, 'recipe': recipe})

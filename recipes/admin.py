@@ -1,6 +1,20 @@
 from django.contrib import admin
+from django.utils.translation import gettext_lazy as _
 
-from .models import Recipe, Ingredient, RecipeIngredient
+from users.models import Favorite
+from .models import Recipe, Ingredient, RecipeIngredient, TAGS
+
+
+class TagFilter(admin.SimpleListFilter):
+    title = _('tags')
+    parameter_name = 'tags'
+
+    def lookups(self, request, model_admin):
+        return TAGS
+
+    def queryset(self, request, queryset):
+        if self.value():
+            return queryset.filter(tags__icontains=self.value())
 
 
 class RecipeIngredientInline(admin.TabularInline):
@@ -9,12 +23,16 @@ class RecipeIngredientInline(admin.TabularInline):
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):
-    list_display = ("pk", "author", "name")
+    list_display = ("pk", "author", "name", "likes")
     search_fields = ("description",)
-    list_filter = ("tags", "author", "name")
+    list_filter = (TagFilter, "author", "name")
     inlines = [
         RecipeIngredientInline,
     ]
+
+    def likes(self, obj):
+        return Favorite.objects.filter(recipe=obj).count()
+    likes.short_description = 'Добавили в избранное'
 
 
 @admin.register(Ingredient)
