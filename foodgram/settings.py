@@ -5,9 +5,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 
 SECRET_KEY = os.environ.get('SECRET_KEY')
-SECRET_KEY = 'it$^5x2(ymoq#$1sigzrq_h2^15vk=nyx+tz##o7s_k715uogt'
 
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = ['*']
 
@@ -60,7 +59,7 @@ WSGI_APPLICATION = 'foodgram.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
-
+'''
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql',
@@ -83,7 +82,7 @@ DATABASES = {
         'PORT': os.environ.get('DB_PORT'),
     }
 }
-'''
+
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators
 
