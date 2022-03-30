@@ -6,29 +6,29 @@ Foodgram - это онлайн-сервис, где пользователи м�
 список покупок, чтобы потом скачать список необходимых для приготовления
 продуктов.
 
-## Стэк
+## Stack
 * Python Django 3.1
 * PostgreSQL
 * Docker
 * NGINX 
 
-## Запуска проекта
-* Установите зависимости 
+## Set up instructions:
+* Install dependencies:
     * Docker 
         * https://docs.docker.com/engine/install/
     * Docker-Compose
         * https://docs.docker.com/compose/install/
 
-* Склонируйте репозиторий на локальную машину или сервер
+* Clone the repo on your machien
 
-* Переключитесь в папку приложения и разверните проект
+* cd to the folder and fire it up
     * ```sudo docker-compose up --build```
 
-* Выполните миграции и загрузите список ингредиентов в базу
+* Apply migrations and load ingredients into the db
     * ```sudo docker-compose exec web python manage.py migrate```
     * ```sudo docker-compose exec web python manage.py loaddata ingredients.json```
 
 
-prod server ip: http://84.201.171.109/
+[outdated] prod server ip: http://84.201.171.109/
 
-prod server url: http://plaun.ml/
+[outdated] prod server url: http://plaun.ml/
