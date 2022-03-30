@@ -1,14 +1,16 @@
 # Foodgram - Recipe Helper
+EN:
 **Final dipolma project at the faculty of Backend Development @ Yandex**
 
-**Дипломный проект курса Бэкенд Разработки**
-
-EN: Foodgram - is an online service, where users can publish their recipes,
+Foodgram - is an online service, where users can publish their recipes,
 follow each other, add recipes to the list of favorites and get a 
 shopping list for chosen recipes, which can be downloaded and let 
 them cook some wonderful meals.
 
-RU: Foodgram - это онлайн-сервис, где пользователи могут публиковать рецепты, 
+RU: 
+**Дипломный проект курса Бэкенд Разработки**
+
+Foodgram - это онлайн-сервис, где пользователи могут публиковать рецепты, 
 подписываться на других пользователей, добавлять рецепты в избранное и
 список покупок, чтобы потом скачать список необходимых для приготовления
 продуктов.
