@@ -28,7 +28,7 @@ Foodgram - это онлайн-сервис, где пользователи м�
     * Docker-Compose
         * https://docs.docker.com/compose/install/
 
-* Clone the repo on your machien
+* Clone the repo on your machine
 
 * cd to the folder and fire it up
     * ```sudo docker-compose up --build```
