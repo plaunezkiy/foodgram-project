@@ -13,6 +13,8 @@ follow each other, add recipes to the list of favorites and get a
 shopping list for chosen recipes, which can be downloaded and let 
 them cook some wonderful meals.
 
+[Demo Video](https://drive.google.com/file/d/1IwEzKMy7_jimQISvGShTQ7jiYEm3DpNh/view?usp=sharing)
+
 RU: 
 **Дипломный проект курса Бэкенд Разработки**
 
